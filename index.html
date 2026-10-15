@@ -11,74 +11,158 @@
 body {
   margin: 0;
   min-height: 100vh;
-  padding: 24px;
-  background: #090909;
-  color: #eee;
-  font-family: system-ui, sans-serif;
+  padding: 20px;
   display: grid;
   place-items: center;
+  background: #080808;
+  color: #eee;
+  font-family: system-ui, sans-serif;
 }
 
-main {
-  width: 100%;
-  max-width: 620px;
-  text-align: center;
-}
-
+main { width: 100%; max-width: 650px; text-align: center; }
 .panel {
-  border: 1px solid #393939;
-  border-radius: 14px;
-  padding: 28px 22px;
   background: #111;
+  border: 1px solid #383838;
+  border-radius: 14px;
+  padding: 28px 20px;
 }
-
-.warning {
-  color: #ff4949;
-  font-size: 13px;
-  letter-spacing: 3px;
-  font-weight: 800;
+.red { color: #ff4545; }
+.warning { color: #ff4545; font-size: 12px; letter-spacing: 3px; font-weight: 800; }
+h1 { font-size: clamp(27px, 6vw, 43px); line-height: 1.15; }
+p { line-height: 1.7; color: #ccc; }
+button {
+  margin: 12px 5px 0;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 8px;
+  background: #eee;
+  color: #111;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
 }
-
-h1 {
-  font-size: clamp(27px, 6vw, 43px);
-  line-height: 1.15;
-}
-
-p { line-height: 1.7; color: #c5c5c5; }
-.red { color: #ff4949; font-weight: bold; }
+.small { color: #888; font-size: 12px; }
 .hidden { display: none !important; }
+
+#screen {
+  position: relative;
+  overflow: hidden;
+  background: #101010;
+  border: 1px solid #555;
+  border-radius: 8px;
+  margin: 24px auto;
+  min-height: 270px;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+#fakeScreen {
+  width: 100%;
+  padding: 25px 12px;
+  background: radial-gradient(ellipse, #252020, #080808 75%);
+}
+
+#shards {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.shard {
+  position: absolute;
+  width: 20%;
+  height: 25%;
+  left: var(--x);
+  top: var(--y);
+  background: linear-gradient(135deg, #5c2020, #171717 65%, #777);
+  border: 1px solid #555;
+  opacity: 0;
+  transform: translate(0, 0) rotate(0);
+}
+
+#screen.breaking .shard {
+  animation: shatter 1.5s ease-in forwards;
+  animation-delay: var(--delay);
+}
+
+@keyframes shatter {
+  0% { opacity: .95; transform: translate(0,0) rotate(0) scale(1); }
+  25% { opacity: 1; }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy))
+      rotate(var(--rot)) scale(.6);
+  }
+}
+
+#truth { animation: appear .5s ease-out; }
+@keyframes appear {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; }
+}
 </style>
 </head>
 <body>
 <main>
   <section id="alert" class="panel">
-    <div class="warning">SECURITY ALERT</div>
+    <div class="warning">SECURITY ALERT — SIMULARE</div>
     <h1 class="red">SYSTEM COMPROMISED?</h1>
     <p>A fost detectată o activitate suspectă.</p>
     <p id="platform">Se verifică platforma...</p>
+    <p class="small">Demonstrație fictivă. Nu s-a accesat sistemul tău.</p>
+    <button id="start">Continuă</button>
+    <button id="escape">ESC — Ieșire</button>
+  </section>
+
+  <section id="breakScene" class="hidden">
+    <div class="warning">CRITICAL ERROR</div>
+    <div id="screen">
+      <div id="fakeScreen">
+        <div class="warning">SYSTEM FAILURE</div>
+        <h1 class="red">CONNECTION LOST</h1>
+        <p>Restoring system...</p>
+        <p class="small">ERROR 0x0000-HAHA</p>
+      </div>
+      <div id="shards"></div>
+    </div>
+    <p class="small">Simulare vizuală — ecranul real este intact.</p>
+    <button id="reveal">Arată-mi adevărul</button>
   </section>
 
   <section id="truth" class="panel hidden">
     <div class="warning">EXPERIMENT ÎNCHEIAT</div>
-    <h1>AI MUȘCAT-O!</h1>
-    <p>Stai liniștit. Nu ți-am spart calculatorul,
-    nu ți-am blocat tastatura și nu ți-am furat datele.</p>
-    <p class="red">Ai deschis un link fără să verifici unde duce.</p>
+    <h1>😂 AI MUȘCAT-O!</h1>
+    <p>Respiră. N-a fost spart nimic. Nici măcar ecranul.</p>
+    <p>Nu ți-am spart calculatorul, nu ți-am blocat tastatura și nu ți-am furat datele.</p>
+    <p class="red"><strong>Dar ai deschis un link fără să verifici unde duce.</strong></p>
     <p>Noi am făcut-o în glumă. Alții s-ar putea să nu glumească.</p>
     <p><strong>Morala: gândește înainte să dai click.</strong></p>
+    <p>Cu drag, doi idioți inofensivi. 🤝</p>
+    <button id="finish">Am înțeles</button>
+  </section>
+
+  <section id="finished" class="panel hidden">
+    <h1>Gluma s-a terminat. 👍</h1>
+    <p>Poți închide această filă.</p>
   </section>
 </main>
 
 <script>
 (() => {
-  const alertBox = document.getElementById("alert");
-  const truthBox = document.getElementById("truth");
+  const ids = ["alert", "breakScene", "truth", "finished"];
+  const show = id => ids.forEach(name =>
+    document.getElementById(name).classList.toggle("hidden", name !== id)
+  );
 
   function detectPlatform() {
     const ua = navigator.userAgent || "";
-    const p = navigator.userAgentData?.platform
-      || navigator.platform || "";
-
+    const p = navigator.userAgentData?.platform || navigator.platform || "";
     if (/iPhone|iPad|iPod/i.test(ua)) return "Apple iOS";
     if (/Android/i.test(ua)) return "Android";
     if (/Windows/i.test(ua) || /Win/i.test(p)) return "Windows";
@@ -90,10 +174,42 @@ p { line-height: 1.7; color: #c5c5c5; }
   document.getElementById("platform").textContent =
     "Platformă estimată: " + detectPlatform();
 
-  window.setTimeout(() => {
-    alertBox.classList.add("hidden");
-    truthBox.classList.remove("hidden");
-  }, 7000);
+  const shards = document.getElementById("shards");
+  for (let i = 0; i < 20; i++) {
+    const shard = document.createElement("div");
+    shard.className = "shard";
+    shard.style.setProperty("--x", (i % 5) * 20 + "%");
+    shard.style.setProperty("--y", Math.floor(i / 5) * 25 + "%");
+    shard.style.setProperty("--dx", (Math.random() * 300 - 150) + "px");
+    shard.style.setProperty("--dy", (100 + Math.random() * 300) + "px");
+    shard.style.setProperty("--rot", (Math.random() * 180 - 90) + "deg");
+    shard.style.setProperty("--delay", (Math.random() * .25) + "s");
+    shards.appendChild(shard);
+  }
+
+  function reveal() {
+    show("truth");
+  }
+
+  document.getElementById("start").addEventListener("click", () => {
+    show("breakScene");
+    const screen = document.getElementById("screen");
+    screen.classList.remove("breaking");
+    void screen.offsetWidth;
+    screen.classList.add("breaking");
+    window.setTimeout(reveal, 3500);
+  });
+
+  document.getElementById("escape").addEventListener("click", reveal);
+  document.getElementById("reveal").addEventListener("click", reveal);
+  document.getElementById("finish").addEventListener("click", () => {
+    show("finished");
+    document.title = "Gluma s-a terminat";
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") reveal();
+  });
 })();
 </script>
 </body>
