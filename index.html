@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>O melodie pentru tine</title>
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: #090909;
+    color: #f2f2f2;
+    font-family: system-ui, sans-serif;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+  }
+
+  main {
+    width: 100%;
+    max-width: 620px;
+    text-align: center;
+  }
+
+  .warning {
+    color: #ff5050;
+    font-size: 13px;
+    letter-spacing: 3px;
+    font-weight: 800;
+  }
+
+  h1 {
+    font-size: clamp(27px, 6vw, 43px);
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+
+  p { line-height: 1.7; color: #c5c5c5; }
+
+  .panel {
+    border: 1px solid #393939;
+    border-radius: 14px;
+    padding: 28px 22px;
+    margin-top: 20px;
+    background: #111;
+  }
+
+  .red { color: #ff5050; font-weight: bold; }
+
+  button {
+    border: 0;
+    border-radius: 8px;
+    padding: 13px 20px;
+    margin-top: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    background: #f0f0f0;
+    color: #111;
+  }
+
+  button:focus-visible {
+    outline: 3px solid #ff5050;
+    outline-offset: 4px;
+  }
+
+  .hidden { display: none; }
+
+  .small { font-size: 13px; color: #888; }
+</style>
+</head>
+<body>
+<main>
+  <section id="alert" class="panel" role="status">
+    <div class="warning">SECURITY ALERT</div>
+    <h1 class="red">SYSTEM COMPROMISED?</h1>
+    <p>Se analizează platforma...</p>
+    <p id="platform">Detectare în curs</p>
+    <p class="small">Apasă ESC pentru a vedea imediat mesajul real.</p>
+    <button id="reveal">Bine, arată-mi adevărul</button>
+  </section>
+
+  <section id="truth" class="panel hidden">
+    <div class="warning">EXPERIMENT ÎNCHEIAT</div>
+    <h1>😂 AI MUȘCAT-O!</h1>
+    <p>
+      Stai liniștit. Nu ți-am spart calculatorul,
+      nu ți-am blocat tastatura și nu ți-am furat datele.
+    </p>
+    <p class="red">Ai deschis un link fără să verifici unde duce.</p>
+    <p>
+      Noi am făcut-o în glumă. Alții s-ar putea să nu glumească.
+    </p>
+    <p><strong>Morala: gândește înainte să dai click.</strong></p>
+    <p>Cu drag, doi idioți inofensivi. 🤝</p>
+    <button id="close">Am înțeles. Închide gluma.</button>
+  </section>
+</main>
+
+<script>
+(() => {
+  const alertBox = document.getElementById("alert");
+  const truthBox = document.getElementById("truth");
+  const platformLabel = document.getElementById("platform");
+
+  function detectPlatform() {
+    const ua = navigator.userAgent || "";
+    const p = navigator.userAgentData?.platform
+      || navigator.platform || "";
+
+    if (/iPhone|iPad|iPod/i.test(ua)) return "Apple iOS";
+    if (/Android/i.test(ua)) return "Android";
+    if (/Windows/i.test(ua) || /Win/i.test(p)) return "Windows";
+    if (/Mac/i.test(p) || /Macintosh/i.test(ua)) return "macOS";
+    if (/Linux/i.test(p) || /Linux/i.test(ua)) return "Linux";
+    return "platformă necunoscută";
+  }
+
+  platformLabel.textContent =
+    "Platformă estimată: " + detectPlatform();
+
+  function revealTruth() {
+    alertBox.classList.add("hidden");
+    truthBox.classList.remove("hidden");
+    document.title = "Lecția de securitate";
+  }
+
+  document.getElementById("reveal").addEventListener("click", revealTruth);
+  document.getElementById("close").addEventListener("click", () => {
+    document.body.innerHTML =
+      '<main><h1>Gluma s-a terminat. 👍</h1>' +
+      '<p>Poți închide această filă.</p></main>';
+    document.title = "Gata";
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") revealTruth();
+  });
+
+  // Dezvăluie automat gluma după câteva secunde.
+  setTimeout(revealTruth, 7000);
+})();
+</script>
+</body>
+</html>
